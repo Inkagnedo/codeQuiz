@@ -5,11 +5,13 @@ var questionContainerElement = document.getElementById('question-container')
 var questionElement = document.getElementById('question')
 var answerButtonsElement = document.getElementById('answer-buttons')
 var timeEl = document.getElementById('timer')
+var initialsEL = document.getElementById('initials')
 var startTime = 75
 var score = 0
-var currentScoreEl = document.getElementById('current-score')
+var highScore = 0
 var actualScoreEl = document.getElementById('actual-score')
-var actualScoreEl = 0
+var highscoreEl = document.getElementById('high-score')
+
 let shuffledQuestions, currentQuestionIndex
 
 startButton.addEventListener('click', startGame)
@@ -23,6 +25,8 @@ function startGame() {
   scoreButton.classList.add('hide')
   shuffledQuestions = questions.sort(() => Math.random() - .5)
   currentQuestionIndex = 0
+  actualScoreEl.textContent = score;
+  highscoreEl.textContent = highScore;
   questionContainerElement.classList.remove('hide')
   setNextQuestion()
 
@@ -46,7 +50,7 @@ function setNextQuestion() {
 function showQuestion(question) {
   questionElement.innerText = question.question
   question.answers.forEach(answer => {
-    const button = document.createElement('button')
+    var button = document.createElement('button')
     button.innerText = answer.text
     button.classList.add('btn')
     if (answer.correct) {
@@ -66,8 +70,8 @@ function resetState() {
 }
 
 function selectAnswer(e) {
-  const selectedButton = e.target
-  const correct = selectedButton.dataset.correct
+  var selectedButton = e.target
+  var correct = selectedButton.dataset.correct
   setStatusClass(document.body, correct)
   Array.from(answerButtonsElement.children).forEach(button => {
     setStatusClass(button, button.dataset.correct)
@@ -75,9 +79,25 @@ function selectAnswer(e) {
   if (shuffledQuestions.length > currentQuestionIndex + 1) {
     nextButton.classList.remove('hide')
   } else {
-    scoreButton.innerText = 'View Score'
-    scoreButton.classList.remove('hide')
+    startButton.innerText = 'Restart'
+    startButton.classList.remove('hide')
+    
+
+
+    stopTimer()
+      actualScoreEl.textContent = timeEl.innerText
+      if (actualScoreEl.textContent > highscoreEl.textContent){
+        initialsEL.textContent= prompt("Enter Initials Here!!")
+        localStorage.setItem ('high-score', score.textContent)
+        highscoreEl.textContent = localStorage.getItem("high-score")
+        localStorage.setItem('initials', initialsEL.textContent)
+      
+        initialsEL.textContent = localStorage.getItem('initials')}
   }
+}
+
+function stopTimer() {
+  clearTimeout(startTime) 
 }
 
 function setStatusClass(element, correct) {
